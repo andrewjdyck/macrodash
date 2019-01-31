@@ -1,0 +1,40 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(statscanr)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+productId <- 36100222
+coord2 <- '9.1.38.0.0.0.0.0.0.0'
+t2 <- get_coordinate_data(productId, coord2, 30)
+plot(as.Date(t2$refPer, '%Y-%m-%d'), t2$value, type='l')
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```
+
