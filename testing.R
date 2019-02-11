@@ -25,11 +25,16 @@ df <- t1[, c('date', 'value')] %>%
   left_join(gt[, c('date', 'hits')], by_x='date', by_y='date') %>%
   filter(!is.na(hits))
 
-train <- df[1:160,]
+df$lnhits <- log(df$hits)
+df$lnfdhits <- c(NA, df$lnhits[2:181] - df$lnhits[1:180])
+df$fdu <- c(NA, df$value[2:181] - df$value[1:180])
+
+train <- df[2:160,]
 test <- df[161:181,]
 
-m <- lm(value ~ hits, data=train)
-test$fit <- predict(m, test)
+m1 <- lm(fdu ~ lnfdhits, data=train)
+m2 <- lm(fdu ~ lnhits, data=train)
+test$fit <- predict(m1, test)
 
 
 
