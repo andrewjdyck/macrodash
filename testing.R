@@ -1,5 +1,7 @@
 
 library(statscanr)
+library(gtrendsR)
+library(dplyr)
 
 # cansimId <- '2820087'
 # productId <- read_cansim_product_mapping(cansimId = cansimId)
@@ -12,9 +14,32 @@ productId <- 14100287
 # coord1 <- '9.7.1.1.1.1'
 coord2 <- '9.7.1.1.1.1.0.0.0.0'
 
-t1 <- get_coordinate_data(productId, coord2, 12*30)
+# vectorId <- get_series_info(productId = productId, coordinateId = coord2)$vectorId
+vectorId <- 2064327
 
-plot(as.Date(t1$refPer, '%Y-%m-%d'), t1$value, type='l')
+t1 <- get_coordinate_data(productId, coord2, 12*30)
+t1$date <- as.Date(t1$refPer, '%Y-%m-%d')
+gt <- gtrends(c("job"), gprop = "web", geo = 'CA-SK', time = "all")[[1]]
+
+df <- t1[, c('date', 'value')] %>%
+  left_join(gt[, c('date', 'hits')], by_x='date', by_y='date') %>%
+  filter(!is.na(hits))
+
+df$lnhits <- log(df$hits)
+df$lnfdhits <- c(NA, df$lnhits[2:181] - df$lnhits[1:180])
+df$fdu <- c(NA, df$value[2:181] - df$value[1:180])
+
+train <- df[2:160,]
+test <- df[161:181,]
+
+m1 <- lm(fdu ~ lnfdhits, data=train)
+m2 <- lm(fdu ~ lnhits, data=train)
+test$fit <- predict(m1, test)
+
+
+
+plot(df$date, df$hits, type='l')
+lines(df$date, df$value, type='l')
 
 # Gross domestic product, expenditure-based, provincial and territorial, annual (x 1,000,000)
 # Table: 36-10-0222-01 (formerly CANSIM 384-0038)
