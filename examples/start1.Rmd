@@ -9,6 +9,7 @@ output:
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(statscanr)
+library(dygraphs)
 ```
 
 Column
@@ -20,6 +21,11 @@ Column
 productId <- 36100222
 coord2 <- '9.1.38.0.0.0.0.0.0.0'
 t2 <- get_coordinate_data(productId, coord2, 30)
-plot(as.Date(t2$refPer, '%Y-%m-%d'), t2$value, type='l')
+t2$refPer <- as.Date(t2$refPer, '%Y-%m-%d')
+plot(t2$refPer, t2$value, type='l')
+
+tt <- as.xts(t2[, c(1,3)])
+dygraph(t2[, 'value']) %>% 
+  dySeries('value', label = "Unemployment")
 ```
 
