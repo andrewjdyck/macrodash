@@ -18,6 +18,7 @@ coord2 <- '9.7.1.1.1.1.0.0.0.0'
 vectorId <- 2064327
 
 t1 <- get_coordinate_data(productId, coord2, 12*30)
+t1 <- get_
 t1$date <- as.Date(t1$refPer, '%Y-%m-%d')
 gt <- gtrends(c("job"), gprop = "web", geo = 'CA-SK', time = "all")[[1]]
 
